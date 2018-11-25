@@ -1,20 +1,29 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var db = require('../database-mongo');
+var app = express();
+
 // UNCOMMENT THE DATABASE YOU'D LIKE TO USE
 // var items = require('../database-mysql');
 // var items = require('../database-mongo');
 
-var app = express();
+app.use(express.static(__dirname + '/../react-client/dist'));
 
-// UNCOMMENT FOR REACT
-// app.use(express.static(__dirname + '/../react-client/dist'));
+app.use(bodyParser.json());
 
-// UNCOMMENT FOR ANGULAR
-// app.use(express.static(__dirname + '/../angular-client'));
-// app.use(express.static(__dirname + '/../node_modules'));
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-app.get('/items', function (req, res) {
-  items.selectAll(function(err, data) {
+
+app.post('/addtodo', function (req, res) {
+  var todos = req.body.todos
+  console.log('todos', req)
+  db.save(todos);
+  res.send('POST request to the homepage')
+})
+
+
+app.get('/gettodo', function (req, res) {
+  db.selectAll(function(err, data) {
     if(err) {
       res.sendStatus(500);
     } else {
@@ -23,7 +32,6 @@ app.get('/items', function (req, res) {
   });
 });
 
-app.listen(3000, function() {
-  console.log('listening on port 3000!');
+app.listen(process.env.PORT || 3000, function () {
+  console.log('Server listening on port 3000!');
 });
-
