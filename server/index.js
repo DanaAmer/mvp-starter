@@ -10,26 +10,22 @@ var app = express();
 app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.use(bodyParser.json());
-
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.post('/addtodo', function (req, res) {
-  var todos = req.body.todos
-  console.log('todos', req)
-  db.save(todos);
-  res.send('POST request to the homepage')
+  var todos = req.body.title
+  db.save(todos, function(text)  {
+    res.send(text + " from server")
+  }) 
 })
 
+var randomCallback = function (err, data) {
+  res.send(data);
+}
 
-app.get('/gettodo', function (req, res) {
-  db.selectAll(function(err, data) {
-    if(err) {
-      res.sendStatus(500);
-    } else {
-      res.json(data);
-    }
-  });
+app.get('/addtodo', function (req, res) {
+  db.selectAll(randomCallback);
 });
 
 app.listen(process.env.PORT || 3000, function () {

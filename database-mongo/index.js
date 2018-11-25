@@ -10,13 +10,14 @@ var TodoSchema = mongoose.Schema({
 
 var Todo = mongoose.model('Todo', TodoSchema);
 
-var save = (data) => {
-  let todo = new Todo(data);
+var save = (data, cb) => {
+  let todo = new Todo({title: data});
   todo.save(function (err) {
     if (err) {
       console.log(err);
     } else {
       console.log("Successfully saved!");
+      cb("Successfully saved! Dana happy")
     }
   });
 }
@@ -30,7 +31,7 @@ db.once('open', function() {
 });
 
 var selectAll = function(callback) {
-  Item.find({}, function(err, items) {
+  Todo.find({}, function(err, items) {
     if(err) {
       callback(err, null);
     } else {
@@ -41,3 +42,4 @@ var selectAll = function(callback) {
 
 module.exports.selectAll = selectAll;
 module.exports.save = save;
+
